@@ -11,6 +11,7 @@ import {
   LinksForm,
 } from '@/app/components/FormSections';
 import { ResumePreview } from '@/app/components/ResumePreview';
+import { ATSScoreCard } from '@/app/components/ATSScoreCard';
 import { useResume } from '@/app/contexts/ResumeContext';
 
 export default function BuilderPage() {
@@ -76,17 +77,21 @@ export default function BuilderPage() {
               </div>
             </div>
 
-            {/* Right Column - Live Preview (1 column) */}
+            {/* Right Column - Live Preview + ATS Score (1 column) */}
             <div className="lg:col-span-1">
-              <div className="sticky top-20">
+              <div className="sticky top-20 space-y-8">
+                {/* Live Preview */}
                 <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
                   <div className="px-6 py-4 border-b border-gray-200">
                     <h2 className="font-semibold text-gray-900">Live Preview</h2>
                   </div>
-                  <div className="p-6 bg-white max-h-[calc(100vh-200px)] overflow-y-auto">
+                  <div className="p-6 bg-white max-h-[calc(100vh-500px)] overflow-y-auto">
                     <ResumePreview data={data} />
                   </div>
                 </div>
+
+                {/* ATS Score Card */}
+                <ATSScoreCard />
               </div>
             </div>
           </div>

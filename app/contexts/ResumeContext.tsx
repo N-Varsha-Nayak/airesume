@@ -138,27 +138,30 @@ const sampleData: ResumeData = {
 
 export function ResumeProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState<ResumeData>(defaultData);
-  const [mounted, setMounted] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   // Load from localStorage on mount
   useEffect(() => {
-    const saved = localStorage.getItem('resume_data');
-    if (saved) {
-      try {
+    try {
+      const saved = localStorage.getItem('resumeBuilderData');
+      if (saved) {
         setData(JSON.parse(saved));
-      } catch (e) {
-        console.error('Failed to load resume data:', e);
       }
+    } catch (e) {
+      console.error('Failed to restore resume data:', e);
     }
-    setMounted(true);
+    setIsHydrated(true);
   }, []);
 
-  // Save to localStorage whenever data changes
+  // Auto-save to localStorage whenever data changes
   useEffect(() => {
-    if (mounted) {
-      localStorage.setItem('resume_data', JSON.stringify(data));
+    if (!isHydrated) return;
+    try {
+      localStorage.setItem('resumeBuilderData', JSON.stringify(data));
+    } catch (e) {
+      console.error('Failed to save resume data:', e);
     }
-  }, [data, mounted]);
+  }, [data, isHydrated]);
 
   const updatePersonalInfo = (info: Partial<ResumeData['personalInfo']>) => {
     setData((prev) => ({
