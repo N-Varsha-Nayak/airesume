@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Navigation } from '@/app/components/Navigation';
 import { ResumePreview } from '@/app/components/ResumePreview';
+import { ATSMini } from '@/app/components/ATSMini';
 import { TemplateSelector } from '@/app/components/TemplateSelector';
 import { ExportButton } from '@/app/components/ExportButton';
 import { ValidationPanel } from '@/app/components/ValidationPanel';
@@ -61,6 +62,13 @@ export default function PreviewPage() {
           {/* Preview Tab */}
           {activeTab === 'preview' && (
             <div className="space-y-6">
+              {/* ATS Mini */}
+              <div className="flex justify-center">
+                <div className="w-full max-w-lg">
+                  <ATSMini />
+                </div>
+              </div>
+
               {/* Full-Page Resume */}
               <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
                 <div className="p-12 print:p-0">

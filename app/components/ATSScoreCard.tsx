@@ -13,16 +13,14 @@ export function ATSScoreCard() {
 
   // Determine color based on score
   const getScoreColor = (s: number) => {
-    if (s >= 80) return 'from-green-400 to-green-600';
-    if (s >= 60) return 'from-blue-400 to-blue-600';
-    if (s >= 40) return 'from-yellow-400 to-yellow-600';
+    if (s >= 71) return 'from-green-400 to-green-600';
+    if (s >= 41) return 'from-yellow-400 to-yellow-600';
     return 'from-red-400 to-red-600';
   };
 
   const getScoreLabel = (s: number) => {
-    if (s >= 80) return 'Excellent';
-    if (s >= 60) return 'Good';
-    if (s >= 40) return 'Fair';
+    if (s >= 71) return 'Strong Resume';
+    if (s >= 41) return 'Getting There';
     return 'Needs Work';
   };
 
