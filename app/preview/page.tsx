@@ -2,6 +2,7 @@
 
 import { Navigation } from '@/app/components/Navigation';
 import { ResumePreview } from '@/app/components/ResumePreview';
+import { TemplateSelector } from '@/app/components/TemplateSelector';
 import { useResume } from '@/app/contexts/ResumeContext';
 import Link from 'next/link';
 
@@ -17,12 +18,15 @@ export default function PreviewPage() {
           {/* Header */}
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900">Resume Preview</h1>
-            <Link
-              href="/builder"
-              className="text-gray-600 hover:text-gray-900 text-sm font-medium"
-            >
-              ← Edit Resume
-            </Link>
+            <div className="flex gap-4 items-center">
+              <TemplateSelector />
+              <Link
+                href="/builder"
+                className="text-gray-600 hover:text-gray-900 text-sm font-medium"
+              >
+                ← Edit Resume
+              </Link>
+            </div>
           </div>
 
           {/* Full-Page Resume */}

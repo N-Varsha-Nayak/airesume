@@ -12,6 +12,8 @@ import {
 } from '@/app/components/FormSections';
 import { ResumePreview } from '@/app/components/ResumePreview';
 import { ATSScoreCard } from '@/app/components/ATSScoreCard';
+import { ImprovementPanel } from '@/app/components/ImprovementPanel';
+import { TemplateSelector } from '@/app/components/TemplateSelector';
 import { useResume } from '@/app/contexts/ResumeContext';
 
 export default function BuilderPage() {
@@ -26,7 +28,8 @@ export default function BuilderPage() {
           {/* Header */}
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900">Resume Builder</h1>
-            <div className="flex gap-3">
+            <div className="flex gap-3 items-center">
+              <TemplateSelector />
               <button
                 onClick={loadSampleData}
                 className="px-4 py-2 text-sm font-medium bg-white border border-gray-300 text-gray-900 rounded-lg hover:bg-gray-50"
@@ -77,7 +80,7 @@ export default function BuilderPage() {
               </div>
             </div>
 
-            {/* Right Column - Live Preview + ATS Score (1 column) */}
+            {/* Right Column - Live Preview + ATS Score + Improvements (1 column) */}
             <div className="lg:col-span-1">
               <div className="sticky top-20 space-y-8">
                 {/* Live Preview */}
@@ -92,6 +95,9 @@ export default function BuilderPage() {
 
                 {/* ATS Score Card */}
                 <ATSScoreCard />
+
+                {/* Improvement Panel */}
+                <ImprovementPanel />
               </div>
             </div>
           </div>

@@ -2,6 +2,7 @@
 
 import { useResume, ResumeData } from '@/app/contexts/ResumeContext';
 import { useState } from 'react';
+import { startsWithActionVerb, hasNumericIndicator } from '@/app/utils/improvementSuggestions';
 
 export function PersonalInfoForm() {
   const { data, updatePersonalInfo } = useResume();
@@ -239,6 +240,16 @@ export function ExperienceForm() {
                   rows={3}
                   className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-900 font-mono"
                 />
+                {exp.description && (
+                  <div className="space-y-1 text-xs text-gray-600">
+                    {!startsWithActionVerb(exp.description) && (
+                      <p className="text-amber-600">💡 Start with a strong action verb (Built, Developed, Led, etc.)</p>
+                    )}
+                    {!hasNumericIndicator(exp.description) && (
+                      <p className="text-amber-600">💡 Add measurable impact (numbers, percentages, metrics).</p>
+                    )}
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -306,6 +317,16 @@ export function ProjectsForm() {
                   rows={2}
                   className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-900 font-mono"
                 />
+                {proj.description && (
+                  <div className="space-y-1 text-xs text-gray-600">
+                    {!startsWithActionVerb(proj.description) && (
+                      <p className="text-amber-600">💡 Start with a strong action verb.</p>
+                    )}
+                    {!hasNumericIndicator(proj.description) && (
+                      <p className="text-amber-600">💡 Add measurable impact (numbers).</p>
+                    )}
+                  </div>
+                )}
                 <input
                   type="text"
                   value={proj.technologies}
