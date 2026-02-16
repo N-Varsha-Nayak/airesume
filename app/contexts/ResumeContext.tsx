@@ -29,10 +29,15 @@ export interface ResumeData {
     id: string;
     name: string;
     description: string;
-    technologies: string;
-    link: string;
+    technologies: string[];
+    liveUrl: string;
+    githubUrl: string;
   }>;
-  skills: string;
+  skills: {
+    technical: string[];
+    soft: string[];
+    tools: string[];
+  };
   links: {
     github: string;
     linkedin: string;
@@ -52,7 +57,9 @@ interface ResumeContextType {
   addProject: (entry: ResumeData['projects'][0]) => void;
   updateProject: (id: string, entry: Partial<ResumeData['projects'][0]>) => void;
   removeProject: (id: string) => void;
-  updateSkills: (skills: string) => void;
+  addSkill: (category: 'technical' | 'soft' | 'tools', skill: string) => void;
+  removeSkill: (category: 'technical' | 'soft' | 'tools', skill: string) => void;
+  updateSkills: (skills: ResumeData['skills']) => void;
   updateLinks: (links: Partial<ResumeData['links']>) => void;
   loadSampleData: () => void;
   reset: () => void;
@@ -71,7 +78,11 @@ const defaultData: ResumeData = {
   education: [],
   experience: [],
   projects: [],
-  skills: '',
+  skills: {
+    technical: [],
+    soft: [],
+    tools: [],
+  },
   links: {
     github: '',
     linkedin: '',
@@ -118,23 +129,72 @@ const sampleData: ResumeData = {
       id: '1',
       name: 'AI Resume Builder',
       description: 'Web app for building AI-powered resumes with ATS scoring',
-      technologies: 'React, Next.js, TypeScript, Tailwind CSS',
-      link: 'https://github.com/example/resume-builder',
+      technologies: ['React', 'Next.js', 'TypeScript', 'Tailwind CSS'],
+      liveUrl: 'https://airesume.example.com',
+      githubUrl: 'https://github.com/example/resume-builder',
     },
     {
       id: '2',
       name: 'Task Management Dashboard',
       description: 'Collaborative task management tool with real-time updates',
-      technologies: 'Node.js, MongoDB, Socket.io, Vue.js',
-      link: 'https://github.com/example/task-dashboard',
+      technologies: ['Node.js', 'MongoDB', 'Socket.io', 'Vue.js'],
+      liveUrl: 'https://tasks.example.com',
+      githubUrl: 'https://github.com/example/task-dashboard',
     },
   ],
-  skills: 'React, Next.js, TypeScript, Node.js, MongoDB, PostgreSQL, Tailwind CSS, GraphQL, REST APIs, Git',
+  skills: {
+    technical: ['TypeScript', 'React', 'Node.js', 'PostgreSQL', 'GraphQL'],
+    soft: ['Team Leadership', 'Problem Solving'],
+    tools: ['Git', 'Docker', 'AWS'],
+  },
   links: {
     github: 'https://github.com/example',
     linkedin: 'https://linkedin.com/in/example',
   },
 };
+
+/**
+ * Migrate old data structure to new format
+ * Handles conversion from old project/skills format to new categorized structure
+ */
+function migrateData(data: any): ResumeData {
+  // Migrate projects
+  if (data.projects && Array.isArray(data.projects)) {
+    data.projects = data.projects.map((proj: any) => ({
+      ...proj,
+      // Convert technologies string to array if needed
+      technologies: Array.isArray(proj.technologies)
+        ? proj.technologies
+        : (typeof proj.technologies === 'string' && proj.technologies
+          ? proj.technologies.split(',').map((t: string) => t.trim())
+          : []),
+      // Migrate old 'link' field to 'liveUrl'
+      liveUrl: proj.liveUrl || proj.link || '',
+      githubUrl: proj.githubUrl || '',
+    }));
+  }
+
+  // Migrate skills from string format to object format
+  if (data.skills && typeof data.skills === 'string') {
+    const skillsArray = data.skills.split(',').map((s: string) => s.trim()).filter((s: string) => s);
+    data.skills = {
+      technical: skillsArray.slice(0, Math.ceil(skillsArray.length / 3)),
+      soft: skillsArray.slice(Math.ceil(skillsArray.length / 3), Math.ceil(2 * skillsArray.length / 3)),
+      tools: skillsArray.slice(Math.ceil(2 * skillsArray.length / 3)),
+    };
+  }
+
+  // Ensure skills object has all categories
+  if (typeof data.skills !== 'string' && typeof data.skills === 'object' && !Array.isArray(data.skills)) {
+    data.skills = {
+      technical: Array.isArray(data.skills?.technical) ? data.skills.technical : [],
+      soft: Array.isArray(data.skills?.soft) ? data.skills.soft : [],
+      tools: Array.isArray(data.skills?.tools) ? data.skills.tools : [],
+    };
+  }
+
+  return data as ResumeData;
+}
 
 export function ResumeProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState<ResumeData>(defaultData);
@@ -145,7 +205,9 @@ export function ResumeProvider({ children }: { children: ReactNode }) {
     try {
       const saved = localStorage.getItem('resumeBuilderData');
       if (saved) {
-        setData(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        const migrated = migrateData(parsed);
+        setData(migrated);
       }
     } catch (e) {
       console.error('Failed to restore resume data:', e);
@@ -237,7 +299,28 @@ export function ResumeProvider({ children }: { children: ReactNode }) {
     }));
   };
 
-  const updateSkills = (skills: string) => {
+  const addSkill = (category: 'technical' | 'soft' | 'tools', skill: string) => {
+    if (!skill.trim()) return;
+    setData((prev) => ({
+      ...prev,
+      skills: {
+        ...prev.skills,
+        [category]: Array.from(new Set([...prev.skills[category], skill.trim()])),
+      },
+    }));
+  };
+
+  const removeSkill = (category: 'technical' | 'soft' | 'tools', skill: string) => {
+    setData((prev) => ({
+      ...prev,
+      skills: {
+        ...prev.skills,
+        [category]: prev.skills[category].filter((s) => s !== skill),
+      },
+    }));
+  };
+
+  const updateSkills = (skills: ResumeData['skills']) => {
     setData((prev) => ({ ...prev, skills }));
   };
 
@@ -271,6 +354,8 @@ export function ResumeProvider({ children }: { children: ReactNode }) {
         addProject,
         updateProject,
         removeProject,
+        addSkill,
+        removeSkill,
         updateSkills,
         updateLinks,
         loadSampleData,

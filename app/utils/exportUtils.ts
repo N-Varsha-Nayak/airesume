@@ -67,22 +67,31 @@ export function exportToText(data: ResumeData, templateStyle: string = 'modern')
     lines.push('-'.repeat(60));
     data.projects.forEach((proj) => {
       lines.push(`${proj.name}`);
-      if (proj.technologies) {
-        lines.push(`Technologies: ${proj.technologies}`);
+      if (proj.technologies.length > 0) {
+        lines.push(`Technologies: ${proj.technologies.join(', ')}`);
       }
       lines.push(proj.description);
-      if (proj.link) {
-        lines.push(`Link: ${proj.link}`);
+      const urls = [proj.liveUrl, proj.githubUrl].filter(Boolean);
+      if (urls.length > 0) {
+        lines.push(`Links: ${urls.join(', ')}`);
       }
       lines.push('');
     });
   }
 
   // Skills
-  if (data.skills) {
+  if (data.skills && (data.skills.technical.length > 0 || data.skills.soft.length > 0 || data.skills.tools.length > 0)) {
     lines.push('SKILLS');
     lines.push('-'.repeat(60));
-    lines.push(data.skills);
+    if (data.skills.technical.length > 0) {
+      lines.push(`Technical: ${data.skills.technical.join(', ')}`);
+    }
+    if (data.skills.soft.length > 0) {
+      lines.push(`Soft Skills: ${data.skills.soft.join(', ')}`);
+    }
+    if (data.skills.tools.length > 0) {
+      lines.push(`Tools & Technologies: ${data.skills.tools.join(', ')}`);
+    }
   }
 
   return lines.join('\n');
@@ -133,10 +142,10 @@ export function exportToCSV(data: ResumeData): string {
 
   rows.push(['', ''].map(escapeCSV).join(','));
   rows.push(['PROJECTS', ''].map(escapeCSV).join(','));
-  rows.push(['Name', 'Description', 'Technologies', 'Link'].map(escapeCSV).join(','));
+  rows.push(['Name', 'Description', 'Technologies', 'Live URL', 'GitHub URL'].map(escapeCSV).join(','));
   data.projects.forEach((proj) => {
     rows.push(
-      [proj.name, proj.description, proj.technologies, proj.link]
+      [proj.name, proj.description, proj.technologies.join(', '), proj.liveUrl, proj.githubUrl]
         .map(escapeCSV)
         .join(',')
     );
@@ -144,7 +153,9 @@ export function exportToCSV(data: ResumeData): string {
 
   rows.push(['', ''].map(escapeCSV).join(','));
   rows.push(['SKILLS', ''].map(escapeCSV).join(','));
-  rows.push(['', data.skills].map(escapeCSV).join(','));
+  rows.push(['Technical', data.skills.technical.join(', ')].map(escapeCSV).join(','));
+  rows.push(['Soft Skills', data.skills.soft.join(', ')].map(escapeCSV).join(','));
+  rows.push(['Tools & Technologies', data.skills.tools.join(', ')].map(escapeCSV).join(','));
 
   return rows.join('\n');
 }
@@ -316,9 +327,12 @@ export function exportToHTML(data: ResumeData): string {
     <div class="entry">
       <div class="entry-header">
         <span>${proj.name}</span>
-        ${proj.link ? `<a href="${proj.link}" style="color: #0066cc; text-decoration: none;">View</a>` : ''}
+        <div style="display: flex; gap: 10px;">
+          ${proj.liveUrl ? `<a href="${proj.liveUrl}" style="color: #0066cc; text-decoration: none;">Live</a>` : ''}
+          ${proj.githubUrl ? `<a href="${proj.githubUrl}" style="color: #0066cc; text-decoration: none;">GitHub</a>` : ''}
+        </div>
       </div>
-      ${proj.technologies ? `<div class="tags">${proj.technologies.split(',').map((t) => `<span class="tag">${t.trim()}</span>`).join('')}</div>` : ''}
+      ${proj.technologies.length > 0 ? `<div class="tags">${proj.technologies.map((t) => `<span class="tag">${t}</span>`).join('')}</div>` : ''}
       <div class="entry-description">${proj.description}</div>
     </div>
     `
@@ -329,15 +343,12 @@ export function exportToHTML(data: ResumeData): string {
   }
 
   ${
-    data.skills
+    (data.skills.technical.length > 0 || data.skills.soft.length > 0 || data.skills.tools.length > 0)
       ? `<div class="section">
     <div class="section-title">Skills</div>
-    <div class="tags">
-      ${data.skills
-        .split(',')
-        .map((skill) => `<span class="tag">${skill.trim()}</span>`)
-        .join('')}
-    </div>
+    ${data.skills.technical.length > 0 ? `<div><strong>Technical:</strong> <div class="tags">${data.skills.technical.map((skill) => `<span class="tag">${skill}</span>`).join('')}</div></div>` : ''}
+    ${data.skills.soft.length > 0 ? `<div><strong>Soft Skills:</strong> <div class="tags">${data.skills.soft.map((skill) => `<span class="tag">${skill}</span>`).join('')}</div></div>` : ''}
+    ${data.skills.tools.length > 0 ? `<div><strong>Tools & Technologies:</strong> <div class="tags">${data.skills.tools.map((skill) => `<span class="tag">${skill}</span>`).join('')}</div></div>` : ''}
   </div>`
       : ''
   }

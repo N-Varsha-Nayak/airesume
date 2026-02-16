@@ -332,10 +332,18 @@ export function validateProjects(projects: ResumeData['projects']): ValidationEr
       });
     }
 
-    if (proj.link && !validateURL(proj.link)) {
+    if (proj.liveUrl && !validateURL(proj.liveUrl)) {
       errors.push({
-        field: `${prefix}.link`,
-        message: 'Invalid URL format',
+        field: `${prefix}.liveUrl`,
+        message: 'Invalid Live URL format',
+        severity: 'warning',
+      });
+    }
+
+    if (proj.githubUrl && !validateURL(proj.githubUrl)) {
+      errors.push({
+        field: `${prefix}.githubUrl`,
+        message: 'Invalid GitHub URL format',
         severity: 'warning',
       });
     }
@@ -355,14 +363,14 @@ export function validateProjects(projects: ResumeData['projects']): ValidationEr
 /**
  * Validate skills section
  */
-export function validateSkills(skills: string): ValidationError[] {
+export function validateSkills(skills: { technical: string[]; soft: string[]; tools: string[] }): ValidationError[] {
   const errors: ValidationError[] = [];
 
-  if (!skills) {
+  if (!skills || (skills.technical.length === 0 && skills.soft.length === 0 && skills.tools.length === 0)) {
     return errors; // Skills are optional
   }
 
-  const skillsList = skills.split(',').map(s => s.trim()).filter(Boolean);
+  const skillsList = [...skills.technical, ...skills.soft, ...skills.tools].filter(Boolean);
 
   if (skillsList.length < 3) {
     errors.push({
@@ -434,7 +442,11 @@ export function calculateCompleteness(data: ResumeData): number {
   }
 
   // Skills (5 points)
-  const skillsList = data.skills.split(',').filter(s => s.trim());
+  const skillsList = [
+    ...data.skills.technical,
+    ...data.skills.soft,
+    ...data.skills.tools,
+  ].filter(s => s.trim());
   if (skillsList.length >= 5) {
     score += 5;
   }
@@ -523,7 +535,11 @@ export function getValidationSuggestions(data: ResumeData): string[] {
   }
 
   // Skills suggestions
-  const skillsList = data.skills.split(',').filter(s => s.trim());
+  const skillsList = [
+    ...data.skills.technical,
+    ...data.skills.soft,
+    ...data.skills.tools,
+  ].filter(s => s.trim());
   if (skillsList.length === 0) {
     suggestions.push('Add your technical and professional skills');
   } else if (skillsList.length < 5) {

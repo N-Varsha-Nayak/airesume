@@ -157,20 +157,49 @@ export function ResumePreview({ data, minimal = false }: ResumePreviewProps) {
       {data.projects.length > 0 && (
         <div className={styles.spacing}>
           <h2 className={styles.sectionTitle}>Projects</h2>
-          <div className="space-y-2">
+          <div className="space-y-3">
             {data.projects.map((project) => (
               <div key={project.id}>
-                <h3 className="font-semibold text-gray-900 text-xs">
-                  {project.link ? (
-                    <a href={project.link} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                      {project.name}
-                    </a>
-                  ) : (
-                    project.name
-                  )}
-                </h3>
+                <div className="flex items-start justify-between gap-2">
+                  <h3 className="font-semibold text-gray-900 text-xs flex-1">{project.name}</h3>
+                  <div className="flex gap-2 flex-shrink-0">
+                    {project.liveUrl && (
+                      <a
+                        href={project.liveUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray-600 hover:text-gray-900 text-xs"
+                        title="Live URL"
+                      >
+                        🔗
+                      </a>
+                    )}
+                    {project.githubUrl && (
+                      <a
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray-600 hover:text-gray-900 text-xs"
+                        title="GitHub"
+                      >
+                        💻
+                      </a>
+                    )}
+                  </div>
+                </div>
                 {project.description && <p className="text-xs text-gray-700 mt-1">{project.description}</p>}
-                {project.technologies && <p className="text-xs text-gray-600 mt-1">{project.technologies}</p>}
+                {Array.isArray(project.technologies) && project.technologies.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {project.technologies.map((tech, idx) => (
+                      <span
+                        key={idx}
+                        className="inline-block bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -178,10 +207,47 @@ export function ResumePreview({ data, minimal = false }: ResumePreviewProps) {
       )}
 
       {/* Skills */}
-      {data.skills && (
+      {(data.skills.technical.length > 0 || data.skills.soft.length > 0 || data.skills.tools.length > 0) && (
         <div>
           <h2 className={styles.sectionTitle}>Skills</h2>
-          <p className="text-xs text-gray-700">{data.skills}</p>
+          <div className="space-y-2">
+            {data.skills.technical.length > 0 && (
+              <div>
+                <p className="text-xs font-semibold text-gray-900 mb-1">Technical</p>
+                <div className="flex flex-wrap gap-1">
+                  {data.skills.technical.map((skill, idx) => (
+                    <span key={idx} className="inline-block bg-blue-100 text-blue-900 px-2 py-1 rounded text-xs">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {data.skills.soft.length > 0 && (
+              <div>
+                <p className="text-xs font-semibold text-gray-900 mb-1">Soft Skills</p>
+                <div className="flex flex-wrap gap-1">
+                  {data.skills.soft.map((skill, idx) => (
+                    <span key={idx} className="inline-block bg-green-100 text-green-900 px-2 py-1 rounded text-xs">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            {data.skills.tools.length > 0 && (
+              <div>
+                <p className="text-xs font-semibold text-gray-900 mb-1">Tools & Technologies</p>
+                <div className="flex flex-wrap gap-1">
+                  {data.skills.tools.map((skill, idx) => (
+                    <span key={idx} className="inline-block bg-purple-100 text-purple-900 px-2 py-1 rounded text-xs">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

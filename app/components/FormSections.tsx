@@ -3,6 +3,8 @@
 import { useResume, ResumeData } from '@/app/contexts/ResumeContext';
 import { useState } from 'react';
 import { startsWithActionVerb, hasNumericIndicator } from '@/app/utils/improvementSuggestions';
+export { SkillsForm } from './SkillsForm';
+export { ProjectsForm } from './ProjectsForm';
 
 export function PersonalInfoForm() {
   const { data, updatePersonalInfo } = useResume();
@@ -255,115 +257,6 @@ export function ExperienceForm() {
           </div>
         ))}
       </div>
-    </div>
-  );
-}
-
-export function ProjectsForm() {
-  const { data, addProject, updateProject, removeProject } = useResume();
-  const [expanding, setExpanding] = useState<string | null>(null);
-
-  const handleAdd = () => {
-    addProject({
-      id: Date.now().toString(),
-      name: '',
-      description: '',
-      technologies: '',
-      link: '',
-    });
-  };
-
-  return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-gray-900">Projects</h3>
-        <button
-          onClick={handleAdd}
-          className="px-3 py-1 text-xs bg-gray-900 text-white rounded hover:bg-gray-800"
-        >
-          + Add
-        </button>
-      </div>
-
-      <div className="space-y-3">
-        {data.projects.map((proj) => (
-          <div key={proj.id} className="border border-gray-200 rounded-lg p-3 bg-gray-50">
-            <div className="flex justify-between items-start cursor-pointer" onClick={() => setExpanding(expanding === proj.id ? null : proj.id)}>
-              <div className="flex-1">
-                <p className="font-medium text-gray-900">{proj.name || 'Project'}</p>
-                <p className="text-xs text-gray-600">{proj.technologies || 'Technologies'}</p>
-              </div>
-              <button
-                onClick={() => removeProject(proj.id)}
-                className="text-xs text-red-600 hover:text-red-700"
-              >
-                Remove
-              </button>
-            </div>
-
-            {expanding === proj.id && (
-              <div className="mt-3 pt-3 border-t border-gray-200 space-y-3">
-                <input
-                  type="text"
-                  value={proj.name}
-                  onChange={(e) => updateProject(proj.id, { name: e.target.value })}
-                  placeholder="Project Name"
-                  className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-900"
-                />
-                <textarea
-                  value={proj.description}
-                  onChange={(e) => updateProject(proj.id, { description: e.target.value })}
-                  placeholder="Project description..."
-                  rows={2}
-                  className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-900 font-mono"
-                />
-                {proj.description && (
-                  <div className="space-y-1 text-xs text-gray-600">
-                    {!startsWithActionVerb(proj.description) && (
-                      <p className="text-amber-600">💡 Start with a strong action verb.</p>
-                    )}
-                    {!hasNumericIndicator(proj.description) && (
-                      <p className="text-amber-600">💡 Add measurable impact (numbers).</p>
-                    )}
-                  </div>
-                )}
-                <input
-                  type="text"
-                  value={proj.technologies}
-                  onChange={(e) => updateProject(proj.id, { technologies: e.target.value })}
-                  placeholder="Technologies used"
-                  className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-900"
-                />
-                <input
-                  type="url"
-                  value={proj.link}
-                  onChange={(e) => updateProject(proj.id, { link: e.target.value })}
-                  placeholder="Project link"
-                  className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-900"
-                />
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-export function SkillsForm() {
-  const { data, updateSkills } = useResume();
-
-  return (
-    <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-gray-900">Skills</h3>
-
-      <textarea
-        value={data.skills}
-        onChange={(e) => updateSkills(e.target.value)}
-        placeholder="Enter skills separated by commas. Example: React, TypeScript, Node.js, MongoDB"
-        rows={3}
-        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 font-mono text-sm"
-      />
     </div>
   );
 }
