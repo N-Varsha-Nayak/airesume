@@ -36,15 +36,13 @@ export function StepPageWrapper({
     reader.onload = (event) => {
       const content = event.target?.result as string;
       setFileContent(content);
+      // Commit artifact as soon as file content is read so gating unlocks reliably.
+      if (content) {
+        uploadArtifact(stepId, file.name, content);
+        completeStep(stepId);
+      }
     };
     reader.readAsText(file);
-  };
-
-  const handleUploadArtifact = () => {
-    if (fileName && fileContent) {
-      uploadArtifact(stepId, fileName, fileContent);
-      completeStep(stepId);
-    }
   };
 
   return (

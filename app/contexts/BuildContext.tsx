@@ -41,42 +41,39 @@ function getStepNumber(stepId: string): number {
 }
 
 export function BuildProvider({ children }: { children: React.ReactNode }) {
-  const [state, setState] = useState<BuildState>(() => {
-    // Initialize from localStorage
-    if (typeof window === 'undefined') {
-      return {
-        completedSteps: new Set(),
-        artifacts: new Map(),
-        finalSubmission: { submittedAt: null, proof: '' },
-      };
-    }
+  const [state, setState] = useState<BuildState>({
+    completedSteps: new Set(),
+    artifacts: new Map(),
+    finalSubmission: { submittedAt: null, proof: '' },
+  });
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  const [currentStep, setCurrentStep] = useState<string>('01-problem');
+
+  // Restore from localStorage after mount to avoid SSR/client hydration mismatch.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
 
     try {
       const saved = localStorage.getItem('rb_build_state');
       if (saved) {
         const parsed = JSON.parse(saved);
-        return {
+        setState({
           completedSteps: new Set(parsed.completedSteps || []),
           artifacts: new Map(parsed.artifacts || []),
           finalSubmission: parsed.finalSubmission || { submittedAt: null, proof: '' },
-        };
+        });
       }
     } catch (e) {
       console.error('Failed to restore build state:', e);
+    } finally {
+      setIsHydrated(true);
     }
+  }, []);
 
-    return {
-      completedSteps: new Set(),
-      artifacts: new Map(),
-      finalSubmission: { submittedAt: null, proof: '' },
-    };
-  });
-
-  const [currentStep, setCurrentStep] = useState<string>('01-problem');
-
-  // Persist state to localStorage
+  // Persist state to localStorage (only after hydration)
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || !isHydrated) return;
 
     const toSave = {
       completedSteps: Array.from(state.completedSteps),
@@ -84,7 +81,7 @@ export function BuildProvider({ children }: { children: React.ReactNode }) {
       finalSubmission: state.finalSubmission,
     };
     localStorage.setItem('rb_build_state', JSON.stringify(toSave));
-  }, [state]);
+  }, [state, isHydrated]);
 
   const uploadArtifact = (stepId: string, fileName: string, content: string) => {
     setState((prev) => {
