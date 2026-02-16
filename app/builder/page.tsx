@@ -13,7 +13,8 @@ import {
 import { ResumePreview } from '@/app/components/ResumePreview';
 import { ATSScoreCard } from '@/app/components/ATSScoreCard';
 import { ImprovementPanel } from '@/app/components/ImprovementPanel';
-import { TemplateSelector } from '@/app/components/TemplateSelector';
+import { TemplatePicker } from '@/app/components/TemplatePicker';
+import { ColorPicker } from '@/app/components/ColorPicker';
 import { useResume } from '@/app/contexts/ResumeContext';
 
 export default function BuilderPage() {
@@ -29,7 +30,6 @@ export default function BuilderPage() {
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900">Resume Builder</h1>
             <div className="flex gap-3 items-center">
-              <TemplateSelector />
               <button
                 onClick={loadSampleData}
                 className="px-4 py-2 text-sm font-medium bg-white border border-gray-300 text-gray-900 rounded-lg hover:bg-gray-50"
@@ -86,10 +86,15 @@ export default function BuilderPage() {
                 {/* Live Preview */}
                 <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
                   <div className="px-6 py-4 border-b border-gray-200">
-                    <h2 className="font-semibold text-gray-900">Live Preview</h2>
+                    <h2 className="font-semibold text-gray-900 mb-4">Customization</h2>
+                    <TemplatePicker />
+                    <ColorPicker />
                   </div>
-                  <div className="p-6 bg-white max-h-[calc(100vh-500px)] overflow-y-auto">
-                    <ResumePreview data={data} />
+                  <div className="px-6 pt-4 pb-6 bg-white">
+                    <h3 className="font-semibold text-gray-900 mb-4">Live Preview</h3>
+                    <div className="max-h-[calc(100vh-600px)] overflow-y-auto">
+                      <ResumePreview data={data} />
+                    </div>
                   </div>
                 </div>
 

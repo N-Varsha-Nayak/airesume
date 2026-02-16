@@ -5,6 +5,7 @@ import "./print.css";
 import { ResumeProvider } from "@/app/contexts/ResumeContext";
 import { BuildProvider } from "@/app/contexts/BuildContext";
 import { TemplateProvider } from "@/app/contexts/TemplateContext";
+import { ToastProvider } from "@/app/contexts/ToastContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,13 +32,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <BuildProvider>
-          <TemplateProvider>
-            <ResumeProvider>
-              {children}
-            </ResumeProvider>
-          </TemplateProvider>
-        </BuildProvider>
+        <ToastProvider>
+          <BuildProvider>
+            <TemplateProvider>
+              <ResumeProvider>
+                {children}
+              </ResumeProvider>
+            </TemplateProvider>
+          </BuildProvider>
+        </ToastProvider>
       </body>
     </html>
   );
