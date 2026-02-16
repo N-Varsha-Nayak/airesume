@@ -105,12 +105,12 @@ export function exportToCSV(data: ResumeData): string {
   rows.push(['LinkedIn', data.links.linkedin].map(escapeCSV).join(','));
   rows.push(['GitHub', data.links.github].map(escapeCSV).join(','));
 
-  rows.push(['', '']);
-  rows.push(['PROFESSIONAL SUMMARY', '']);
+  rows.push(['', ''].map(escapeCSV).join(','));
+  rows.push(['PROFESSIONAL SUMMARY', ''].map(escapeCSV).join(','));
   rows.push(['', data.summary].map(escapeCSV).join(','));
 
-  rows.push(['', '']);
-  rows.push(['EXPERIENCE', '']);
+  rows.push(['', ''].map(escapeCSV).join(','));
+  rows.push(['EXPERIENCE', ''].map(escapeCSV).join(','));
   rows.push(['Company', 'Position', 'Start Date', 'End Date', 'Description'].map(escapeCSV).join(','));
   data.experience.forEach((exp) => {
     rows.push(
@@ -120,8 +120,8 @@ export function exportToCSV(data: ResumeData): string {
     );
   });
 
-  rows.push(['', '']);
-  rows.push(['EDUCATION', '']);
+  rows.push(['', ''].map(escapeCSV).join(','));
+  rows.push(['EDUCATION', ''].map(escapeCSV).join(','));
   rows.push(['School', 'Degree', 'Field', 'Graduation Date'].map(escapeCSV).join(','));
   data.education.forEach((edu) => {
     rows.push(
@@ -131,8 +131,8 @@ export function exportToCSV(data: ResumeData): string {
     );
   });
 
-  rows.push(['', '']);
-  rows.push(['PROJECTS', '']);
+  rows.push(['', ''].map(escapeCSV).join(','));
+  rows.push(['PROJECTS', ''].map(escapeCSV).join(','));
   rows.push(['Name', 'Description', 'Technologies', 'Link'].map(escapeCSV).join(','));
   data.projects.forEach((proj) => {
     rows.push(
@@ -142,8 +142,8 @@ export function exportToCSV(data: ResumeData): string {
     );
   });
 
-  rows.push(['', '']);
-  rows.push(['SKILLS', '']);
+  rows.push(['', ''].map(escapeCSV).join(','));
+  rows.push(['SKILLS', ''].map(escapeCSV).join(','));
   rows.push(['', data.skills].map(escapeCSV).join(','));
 
   return rows.join('\n');
