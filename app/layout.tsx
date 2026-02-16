@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import "./print.css";
 import { ResumeProvider } from "@/app/contexts/ResumeContext";
 import { BuildProvider } from "@/app/contexts/BuildContext";
 import { TemplateProvider } from "@/app/contexts/TemplateContext";
